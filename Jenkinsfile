@@ -7,7 +7,7 @@ pipeline {
         maven 'M3_8_2'
     }
     stages {
-        stage('Build and Analize') {
+        /*stage('Build and Analize') {
             steps {
                 dir('microservicio-service/'){
                     echo 'Execute Maven and Analizing with SonarServer'
@@ -20,11 +20,11 @@ pipeline {
                             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
                             -Djacoco.output=tcpclient \
                             -Djacoco.address=127.0.0.1 \
-                            -Djacoco.port=10001"*/
+                            -Djacoco.port=10001"
                     }
                 }
             }
-        }
+        }*/
         /*stage('Quality Gate'){
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
@@ -32,7 +32,7 @@ pipeline {
                 }
             }
         }*/
-        stage('Container Build') {
+        /*stage('Container Build') {
             steps {
                 dir('microservicio-service/'){
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub_id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
@@ -41,8 +41,8 @@ pipeline {
                     }
                 }
             }
-        }
-        stage('Container Push Nexus') {
+        }*/
+        /*stage('Container Push Nexus') {
             steps {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockernexus_id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                     sh 'docker login ${LOCAL_SERVER}:8083 -u $USERNAME -p $PASSWORD'
@@ -50,7 +50,7 @@ pipeline {
                     sh 'docker push ${LOCAL_SERVER}:8083/repository/docker-private/microservicio_nexus:dev'
                 }
             }
-        }
+        }*/
         stage('Container Run') {
             steps {
                 sh 'docker stop microservicio-one || true'
