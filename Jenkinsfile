@@ -64,7 +64,7 @@ pipeline {
                 }
             }
         }
-        stage('Container Push Nexus') {
+        /*stage('Container Push Nexus') {
             steps {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockernexus_id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                     sh 'docker login ${LOCAL_SERVER}:8083 -u $USERNAME -p $PASSWORD'
@@ -72,17 +72,17 @@ pipeline {
                     sh 'docker push ${LOCAL_SERVER}:8083/repository/docker-private/microservicio_nexus:dev'
                 }
             }
-        }
+        }*/
         stage('Container Run') {
             steps {
                 sh 'docker stop microservicio-one || true'
-                sh 'docker run -d --rm --name microservicio-one -e SPRING_PROFILES_ACTIVE=qa -p 8090:8090 ${LOCAL_SERVER}:8083/repository/docker-private/microservicio_nexus:dev'
+                sh 'docker run -d --rm --name microservicio-one -e SPRING_PROFILES_ACTIVE=qa -p 8090:8090 microservicio-service'
             }
         }
         stage('Testing') {
             steps {
 				dir('cypress/') {
-					sh 'docker run --rm --name Cypress -v /Users/javierrodriguez/Documents/Repositorios/CursoMicroservicios/jenkins_home/workspace/Pruebas/Cypress:/e2e -w /e2e -e Cypress cypress/included:3.4.0'
+					sh 'docker run --rm --name Cypress -v /Users/javierrodriguez/Documents/Repositorios/CursoMicroservicios/jenkins_home/workspace/Pruebas/Cypress/cypress:/e2e -w /e2e -e Cypress cypress/included:3.4.0'
 				}
             }
         }
