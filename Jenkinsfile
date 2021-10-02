@@ -33,7 +33,7 @@ pipeline {
                 }
             }
         }*/
-        stage('Frontend') {
+        /*stage('Frontend') {
             steps {
                 echo 'Building Frontend'
                 dir('frontend/'){
@@ -44,7 +44,7 @@ pipeline {
                     sh 'docker run -d --rm --name frontend-one -p 8010:80 frontend-web'
                 }
             }
-        }
+        }*/
         stage('Database') {
 			steps {
 				dir('liquibase/'){
@@ -79,7 +79,7 @@ pipeline {
                 sh 'docker run -d --rm --name microservicio-one -e SPRING_PROFILES_ACTIVE=qa -p 8090:8090 microservicio-service'
             }
         }
-        stage('Testing') {
+        /*stage('Testing') {
             steps {
 				dir('cypress/') {
                     sh 'docker build -t cypressfront .'
@@ -87,7 +87,7 @@ pipeline {
 					//sh 'docker run --rm --name Cypress -v /Users/javierrodriguez/Documents/Repositorios/EcosistemaJenkins/jenkins_home/workspace/Microservicio/Cypress:/e2e -w /e2e -e Cypress cypress/included:3.4.0'
 				}
             }
-        }
+        }*
         /*stage('tar videos') 
         {
             steps 
@@ -99,5 +99,29 @@ pipeline {
                 }
             }
         }*/
+        stage('Estress') {
+            steps {
+                dir('Gatling/'){
+                    sh 'mvn gatling:test'
+                }
+            }
+            post {
+                always {
+                    gatlingArchive()
+                }
+            }
+        }
+    }
+    post {
+        always {
+            //deleteDir()
+            echo 'Always'
+        }
+        success {
+            echo 'I succeeeded!'
+        }
+        failure {
+            echo 'I failed :('
+        }
     }
 }
