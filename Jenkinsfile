@@ -126,7 +126,7 @@ pipeline {
                 }
             }
         }*/
-        stage('Estress') {
+        /*stage('Estress') {
             steps {
                 dir('Gatling/'){
                     sh 'mvn gatling:test'
@@ -137,7 +137,7 @@ pipeline {
                     gatlingArchive()
                 }
             }
-        }
+        }*/
     }
     post {
         always {

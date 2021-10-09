@@ -15,3 +15,8 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   server:
     waitTimeInMsWhenSyncEmpty: 0    #wait time for subsequent sync
+
+
+
+
+# EUREKA

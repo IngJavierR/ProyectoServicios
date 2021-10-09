@@ -25,3 +25,6 @@ eureka:
   instance:
     leaseRenewalIntervalInSeconds: 5
     preferIpAddress: true
+
+
+# MICROSERVICIO One
