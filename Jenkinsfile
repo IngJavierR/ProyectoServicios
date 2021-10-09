@@ -40,6 +40,12 @@ pipeline {
             }
         }*/
         /*stage('Frontend') {
+            when {
+                anyOf {
+                    changeset "*frontend/**"
+                    expression { currentBuild.previousBuild.result != "SUCCESS"}
+                }
+            }
             steps {
                 echo 'Building Frontend'
                 dir('frontend/'){
@@ -122,6 +128,12 @@ pipeline {
         }
         
         /*stage('Container Push Nexus') {
+            when {
+                anyOf {
+                    changeset "*microservicio-service/**"
+                    expression { currentBuild.previousBuild.result != "SUCCESS"}
+                }
+            }
             steps {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockernexus_id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                     sh 'docker login ${LOCAL_SERVER}:8083 -u $USERNAME -p $PASSWORD'
