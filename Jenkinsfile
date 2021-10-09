@@ -32,6 +32,30 @@ pipeline {
                 }
             }
         }
+        stage('Build and Analize Two') {
+            when {
+                anyOf {
+                    changeset "*microservicio-service-two/**"
+                    expression { currentBuild.previousBuild.result != "SUCCESS"}
+                }
+            }
+            steps {
+                dir('microservicio-service-two/'){
+                    echo 'Execute Maven and Analizing with SonarServer'
+                    withSonarQubeEnv('SonarServer') {
+                        sh "mvn clean package  \
+                            -Dsonar.projectKey=21_MyCompany_Microservice_Two \
+                            -Dsonar.projectName=21_MyCompany_Microservice_Two \
+                            -Dsonar.sources=src/main \
+                            -Dsonar.coverage.exclusions=**/*TO.java,**/*DO.java,**/curso/web/**/*,**/curso/persistence/**/*,**/curso/commons/**/*,**/curso/model/**/* \
+                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+                            -Djacoco.output=tcpclient \
+                            -Djacoco.address=127.0.0.1 \
+                            -Djacoco.port=10001"
+                    }
+                }
+            }
+        }
         /*stage('Quality Gate'){
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
@@ -84,6 +108,22 @@ pipeline {
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub_id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                         sh 'docker login -u $USERNAME -p $PASSWORD'
                         sh 'docker build -t microservicio-service .'
+                    }
+                }
+            }
+        }
+        stage('Container Build Two') {
+            when {
+                anyOf {
+                    changeset "*microservicio-service-two/**"
+                    expression { currentBuild.previousBuild.result != "SUCCESS"}
+                }
+            }
+            steps {
+                dir('microservicio-service-two/'){
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub_id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh 'docker build -t microservicio-service-two .'
                     }
                 }
             }
@@ -149,6 +189,15 @@ pipeline {
 
                 sh 'docker stop microservicio-one-two || true'
                 sh 'docker run -d --rm --name microservicio-one-two -e SPRING_PROFILES_ACTIVE=qa microservicio-service'
+            }
+        }
+        stage('Container Run Two') {
+            steps {
+                sh 'docker stop microservicio-two || true'
+                sh 'docker run -d --rm --name microservicio-two -e SPRING_PROFILES_ACTIVE=qa microservicio-service-two'
+
+                sh 'docker stop microservicio-two-two || true'
+                sh 'docker run -d --rm --name microservicio-two-two -e SPRING_PROFILES_ACTIVE=qa microservicio-service-two'
             }
         }
         /*stage('Testing') {
