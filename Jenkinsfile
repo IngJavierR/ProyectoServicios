@@ -143,18 +143,12 @@ pipeline {
             }
         }*/
         stage('Container Run') {
-            when {
-                anyOf {
-                    changeset "*microservicio-service/**"
-                    expression { currentBuild.previousBuild.result != "SUCCESS"}
-                }
-            }
             steps {
                 sh 'docker stop microservicio-one || true'
-                sh 'docker run -d --rm --name microservicio-one -e SPRING_PROFILES_ACTIVE=qa -p 8090:8090 microservicio-service'
+                sh 'docker run -d --rm --name microservicio-one -e SPRING_PROFILES_ACTIVE=qa microservicio-service'
 
                 sh 'docker stop microservicio-one-two || true'
-                sh 'docker run -d --rm --name microservicio-one-two -e SPRING_PROFILES_ACTIVE=qa -p 8091:8090 microservicio-service'
+                sh 'docker run -d --rm --name microservicio-one-two -e SPRING_PROFILES_ACTIVE=qa microservicio-service'
             }
         }
         /*stage('Testing') {
