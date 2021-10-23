@@ -41,6 +41,6 @@ public class HelloController {
             notes = "Pong",
             produces = "application/json")
     public ResponseEntity test() {
-        return new ResponseEntity<>("pong", HttpStatus.OK);
+        return new ResponseEntity<>("pong-Version2", HttpStatus.OK);
     }
 }
