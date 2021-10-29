@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: microservice-two-container
-        image: postgres:11
+        image: ingjavierr/microservicio-two:v1
         ports:
         - containerPort: 8100
         env:

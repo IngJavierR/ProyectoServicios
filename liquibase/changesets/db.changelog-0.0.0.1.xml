@@ -20,4 +20,18 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet  author="liquibase-docs"  id="insert-example">  
+        <insert schemaName="public"  
+                tableName="USERS">  
+            <column name="DS_NAME" value="Javier"/>
+            <column name="DS_LASTNAME" value="Rodríguez"/>
+            <column name="AGE" value="16"/>
+        </insert>  
+        <insert schemaName="public"  
+                tableName="USERS">  
+            <column name="DS_NAME" value="Francisco"/>
+            <column name="DS_LASTNAME" value="Rodríguez"/>
+            <column name="AGE" value="20"/>
+        </insert>  
+    </changeSet>
 </databaseChangeLog> 
