@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://192.168.1.133:5432/microservicio
-    username: postgres
-    password: project123
+    url: jdbc:postgresql://${DATABASE_SVC_SERVICE_HOST}:${DATABASE_SVC_PORT_5432_TCP_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL9Dialect
@@ -16,8 +16,8 @@ server:
 
 eureka:
   client:
-    register-with-eureka: true
-    fetch-registry: true
+    register-with-eureka: false
+    fetch-registry: false
     service-url:
       defaultZone: http://192.168.1.133:8761/eureka
   instance:

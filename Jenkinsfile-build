@@ -1,0 +1,105 @@
+pipeline {
+    agent any
+    environment {
+        LOCAL_SERVER = '192.168.1.133'
+    }
+    tools {
+        maven 'M3_8_2'
+        nodejs 'NodeJs12'
+    }
+    stages {
+        stage('Build and Analize') {
+            when {
+                anyOf {
+                    changeset "*microservicio-service/**"
+                    expression { currentBuild.previousBuild.result != "SUCCESS"}
+                }
+            }
+            steps {
+                dir('microservicio-service/'){
+                    echo 'Execute Maven and Analizing with SonarServer'
+                    withSonarQubeEnv('SonarServer') {
+                        sh "mvn clean package -DskipTests"
+                    }
+                }
+            }
+        }
+        stage('Build and Analize Two') {
+            when {
+                anyOf {
+                    changeset "*microservicio-service-two/**"
+                    expression { currentBuild.previousBuild.result != "SUCCESS"}
+                }
+            }
+            steps {
+                dir('microservicio-service-two/'){
+                    echo 'Execute Maven and Analizing with SonarServer'
+                    withSonarQubeEnv('SonarServer') {
+                        sh "mvn clean package -DskipTests"
+                    }
+                }
+            }
+        }
+        stage('Database') {
+            when {
+                anyOf {
+                    changeset "*liquibase/**"
+                    expression { currentBuild.previousBuild.result != "SUCCESS"}
+                }
+            }
+			steps {
+				dir('liquibase/'){
+					sh '/opt/liquibase/liquibase --version'
+					sh '/opt/liquibase/liquibase --changeLogFile="changesets/db.changelog-master.xml" update'
+					echo 'Applying Db changes'
+				}
+			}
+		}
+        stage('Container Build') {
+            when {
+                anyOf {
+                    changeset "*microservicio-service/**"
+                    expression { currentBuild.previousBuild.result != "SUCCESS"}
+                }
+            }
+            steps {
+                dir('microservicio-service/'){
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub_id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh 'docker build -t ingjavierr/microservicio-one:v1 .'
+                        sh 'docker push ingjavierr/microservicio-one:v1'
+                    }
+                }
+            }
+        }
+        stage('Container Build Two') {
+            when {
+                anyOf {
+                    changeset "*microservicio-service-two/**"
+                    expression { currentBuild.previousBuild.result != "SUCCESS"}
+                }
+            }
+            steps {
+                dir('microservicio-service-two/'){
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub_id', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                        sh 'docker login -u $USERNAME -p $PASSWORD'
+                        sh 'docker build -t ingjavierr/microservicio-two:v1 .'
+                        sh 'docker push ingjavierr/microservicio-two:v1'
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            //deleteDir()
+            echo 'Always'
+        }
+        success {
+            echo 'I succeeeded!'
+        }
+        failure {
+            echo 'I failed :('
+        }
+    }
+}

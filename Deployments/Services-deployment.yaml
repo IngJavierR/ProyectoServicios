@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice-two-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: microservice-two-pod
+  template:
+    metadata:
+      labels:
+        app: microservice-two-pod
+    spec:
+      containers:
+      - name: microservice-two-container
+        image: postgres:11
+        ports:
+        - containerPort: 8100
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: qa
+        - name: TZ
+          value: America/Mexico_City
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: POSTGRES_DB
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: microservice-two-svc
+spec:
+  selector:
+    app: microservice-two-pod
+  ports:
+  - port: 8100
+    protocol: TCP
+    targetPort: 8100
+  type: LoadBalancer

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-dep
+spec:
+  replicas: 1
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  selector:
+    matchLabels:
+      app: hello-world-pod
+  template:
+    metadata:
+      labels:
+        app: hello-world-pod
+    spec:
+      containers:
+      - name: hello-world-container
+        image: ingjavierr/microservicio-one:v1
+        ports:
+        - containerPort: 8090
+        readinessProbe:
+          httpGet:
+            path: /microservicio/ping
+            port: 8090
+        env:
+        - name: DATABASE_SERVER
+          value: "localhost.sql"
+        - name: APP1_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: app1
+              key: USERNAME
+        - name: APP1_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app1
+              key: PASSWORD
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-svc
+spec:
+  selector:
+    app: hello-world-pod
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  type: ClusterIP
