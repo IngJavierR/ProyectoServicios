@@ -39,7 +39,7 @@ public class Application {
         return new ModelMapper();
     }
 
-    @LoadBalanced
+    //@LoadBalanced
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
