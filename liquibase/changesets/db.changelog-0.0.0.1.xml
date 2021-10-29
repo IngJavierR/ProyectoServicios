@@ -25,14 +25,14 @@
                 tableName="USERS">  
             <column name="ID" value="1"/>
             <column name="DS_NAME" value="Javier"/>
-            <column name="DS_LASTNAME" value="Rodríguez"/>
+            <column name="DS_LASTNAME" value="Rodriguez"/>
             <column name="AGE" value="16"/>
         </insert>  
         <insert schemaName="public"  
                 tableName="USERS">  
             <column name="ID" value="2"/>
             <column name="DS_NAME" value="Francisco"/>
-            <column name="DS_LASTNAME" value="Rodríguez"/>
+            <column name="DS_LASTNAME" value="Rodriguez"/>
             <column name="AGE" value="20"/>
         </insert>  
     </changeSet>
