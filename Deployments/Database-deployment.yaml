@@ -17,6 +17,7 @@ spec:
         image: postgres:11
         ports:
         - containerPort: 5432
+        imagePullPolicy: Always
         env:
         - name: POSTGRES_USER
           valueFrom:
