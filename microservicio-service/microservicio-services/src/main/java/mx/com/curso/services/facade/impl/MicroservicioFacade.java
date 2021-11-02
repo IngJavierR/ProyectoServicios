@@ -28,7 +28,8 @@ public class MicroservicioFacade implements IMicroservicioFacade {
     RestTemplate restTemplate;
 
     public List<UserTO> getAllUsers() {
-        ResponseEntity<UserTO[]> response = restTemplate.getForEntity(String.format("http://%s:%s/microservicio/users", serviceHost, servicePort), UserTO[].class);
+        //ResponseEntity<UserTO[]> response = restTemplate.getForEntity(String.format("http://%s:%s/microservicio/users", serviceHost, servicePort), UserTO[].class);
+        ResponseEntity<UserTO[]> response = restTemplate.getForEntity(String.format("http://%s:%s/microservicio/users", "microservice-two-svc.default.svc.cluster.local", servicePort), UserTO[].class);
         return Arrays.asList(response.getBody());
         //return this.microservicioService.getUsers();
     }

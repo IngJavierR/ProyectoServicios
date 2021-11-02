@@ -1,0 +1,157 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-svc
+spec:
+  ports:
+  - port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app: database-pod
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: microservice-one-svc
+spec:
+  ports:
+  - port: 8090
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: microservice-one-pod
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: microservice-two-svc
+spec:
+  ports:
+  - port: 8100
+    protocol: TCP
+    targetPort: 8100
+  selector:
+    app: microservice-two-pod
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database-pod
+  template:
+    metadata:
+      labels:
+        app: database-pod
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: database
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: database
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_DB
+              name: database
+        image: postgres:11
+        imagePullPolicy: Always
+        name: database-container
+        ports:
+        - containerPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice-one-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: microservice-one-pod
+  template:
+    metadata:
+      labels:
+        app: microservice-one-pod
+    spec:
+      containers:
+      - env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: qa
+        - name: TZ
+          value: America/Mexico_City
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: database
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: database
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_DB
+              name: database
+        image: ingjavierr/microservicio-one:v1
+        imagePullPolicy: Always
+        name: microservice-one-container
+        ports:
+        - containerPort: 8090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice-two-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: microservice-two-pod
+  template:
+    metadata:
+      labels:
+        app: microservice-two-pod
+    spec:
+      containers:
+      - env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: qa
+        - name: TZ
+          value: America/Mexico_City
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: database
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: database
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_DB
+              name: database
+        image: ingjavierr/microservicio-two:v1
+        imagePullPolicy: Always
+        name: microservice-two-container
+        ports:
+        - containerPort: 8100
