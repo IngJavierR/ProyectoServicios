@@ -1243,7 +1243,7 @@ spec:
         - name: KONG_PROXY_ERROR_LOG
           value: /dev/stderr
         - name: KONG_PLUGINS
-          value: oidc
+          value: oidc,rate-limiting,ip-restriction
         image: ingjavierr/kong-oidc:2.5.1
         lifecycle:
           preStop:

@@ -5,6 +5,8 @@ metadata:
   annotations:
     konghq.com/strip-path: "true"
     konghq.com/plugins: oidc
+    konghq.com/plugins: rate-limit
+    konghq.com/plugins: ip-restriction
 spec:
   ingressClassName: kong
   rules:

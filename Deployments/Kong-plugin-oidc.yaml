@@ -5,7 +5,7 @@ metadata:
 config:
   discovery: http://192.168.1.133:8080/auth/realms/master/.well-known/openid-configuration
   client_id: kong
-  client_secret: 2eeb5c0e-fa7b-4fce-89ab-0f717d5936b3
-  realm: kong
+  client_secret: 6a59d082-8dd6-48f4-94df-65589b4ccca5
+  realm: master
   introspection_endpoint: http://192.168.1.133:8080/auth/realms/master/protocol/openid-connect/token/introspect
 plugin: oidc
